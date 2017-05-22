@@ -1,5 +1,6 @@
 package cat.xtec.ioc.screens;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -14,6 +15,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.ArrayList;
 
+import cat.xtec.ioc.SpaceRace;
 import cat.xtec.ioc.helpers.AssetManager;
 import cat.xtec.ioc.helpers.InputHandler;
 import cat.xtec.ioc.objects.Asteroid;
@@ -27,7 +29,8 @@ public class GameScreen implements Screen {
     static Bullet bullet = null;
     // Per controlar el gameover
     Boolean gameOver = false;
-
+    private int puntuacion;
+    private double multiplicador;
     // Objectes necessaris
     private static Stage stage;
     private Spacecraft spacecraft;
@@ -41,12 +44,14 @@ public class GameScreen implements Screen {
     // Per controlar l'animació de l'explosió
     private float explosionTime = 0;
     private float explosionTimeBullet = 0;
+    private SpaceRace game;
 
     // Preparem el textLayout per escriure text
-   // private GlyphLayout textLayout;
+    private GlyphLayout textPuntuacion;
+    private GlyphLayout textLayout;
 
-    public GameScreen(Batch prevBatch, Viewport prevViewport, int dificultad) {
-
+    public GameScreen(Batch prevBatch, Viewport prevViewport, int dificultad, SpaceRace game) {
+        this.game = game;
 
         dificultad(dificultad);
 
@@ -84,9 +89,10 @@ public class GameScreen implements Screen {
         // Donem nom a l'Actor
         spacecraft.setName("spacecraft");
 
-        // Iniciem el GlyphLayout
-       // textLayout = new GlyphLayout();
-      //  textLayout.setText(AssetManager.font, "GameOver");
+        textPuntuacion = new GlyphLayout();
+        puntuacion = 0;
+
+       textLayout = new GlyphLayout();
 
         // Assignem com a gestor d'entrada la classe InputHandler
         Gdx.input.setInputProcessor(new InputHandler(this));
@@ -103,13 +109,24 @@ public class GameScreen implements Screen {
             }
         }
     }
-
-    public void comprobarColisiones(){
-        if (scrollHandler.collides(spacecraft)) {
-            // Si hi ha hagut col·lisió: Reproduïm l'explosió i posem l'estat a GameOver
-
-            AssetManager.explosionSound.play();
-            stage.getRoot().findActor("spacecraft").remove();
+    public void puntuacion (){
+        batch.begin();
+        puntuacion+=10*multiplicador;
+        textPuntuacion.setText(AssetManager.font, "Pts: "+puntuacion );
+        AssetManager.font.draw(batch, textPuntuacion, Settings.GAME_WIDTH-100, 5);
+        batch.end();
+    }
+    public void gameOver(){
+        batch.begin();
+        textLayout.setText(AssetManager.font, "FINAL: " + Integer.toString(puntuacion));
+        gameOver = true;
+        AssetManager.font.draw(batch, textLayout, (Settings.GAME_WIDTH - textLayout.width) / 2, (Settings.GAME_HEIGHT - textLayout.height) / 2);
+        batch.end();
+    }
+    public void reiniciar(){
+        if (Gdx.input.isTouched()) {
+            game.setScreen(new MenuScreen(this.game));
+            dispose();
         }
     }
 
@@ -125,16 +142,19 @@ public class GameScreen implements Screen {
                 Settings.ASTEROID_GAP += 10;
                 Settings.SPACECRAFT_VELOCITY += 30;
                 Settings.ASTEROID_SPEED += 20;
+                multiplicador = 1;
                 break;
             case 2:
                 Settings.ASTEROID_SPEED -= 20;
                 Settings.SPACECRAFT_VELOCITY += 10;
                 Settings.ASTEROID_GAP -= 20;
+                multiplicador = 1.5;
 
             case 3:
                 Settings.ASTEROID_GAP -= 50;
                 Settings.ASTEROID_SPEED -= 40;
                 Settings.SPACECRAFT_VELOCITY -= 10;
+                multiplicador = 2;
         }
     }
     private void drawElements() {
@@ -218,8 +238,9 @@ public class GameScreen implements Screen {
 
                 explosionTimeBullet += delta;
                 bullet = null;
+                puntuacion +=100;
             }
-
+            puntuacion();
         } else {
             batch.begin();
             // Si hi ha hagut col·lisió: Reproduïm l'explosió
@@ -228,10 +249,12 @@ public class GameScreen implements Screen {
             batch.end();
 
             explosionTime += delta;
+            gameOver();
+            reiniciar();
         }
 
 
-            //drawElements();
+           // drawElements();
 
 
         }

@@ -28,7 +28,7 @@ public class MenuScreen implements Screen {
     private TextButton facil, medio, dificil;
     private TextButton.TextButtonStyle textButtonStyle;
 
-    public MenuScreen(SpaceRace game) {
+    public MenuScreen(final SpaceRace game) {
 
         textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.font = AssetManager.font;
@@ -84,7 +84,7 @@ public class MenuScreen implements Screen {
         facil.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                MenuScreen.this.game.setScreen(new GameScreen(MenuScreen.this.stage.getBatch(), MenuScreen.this.stage.getViewport(), 1));
+                MenuScreen.this.game.setScreen(new GameScreen(MenuScreen.this.stage.getBatch(), MenuScreen.this.stage.getViewport(), 1,game));
                 dispose();
             }
         });
@@ -92,7 +92,7 @@ public class MenuScreen implements Screen {
         medio.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                MenuScreen.this.game.setScreen(new GameScreen(MenuScreen.this.stage.getBatch(), MenuScreen.this.stage.getViewport(), 2));
+                MenuScreen.this.game.setScreen(new GameScreen(MenuScreen.this.stage.getBatch(), MenuScreen.this.stage.getViewport(), 2,game));
                 dispose();
             }
         });
@@ -100,13 +100,15 @@ public class MenuScreen implements Screen {
         dificil.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                MenuScreen.this.game.setScreen(new GameScreen(MenuScreen.this.stage.getBatch(), MenuScreen.this.stage.getViewport(), 3));
+                MenuScreen.this.game.setScreen(new GameScreen(MenuScreen.this.stage.getBatch(), MenuScreen.this.stage.getViewport(), 3, game));
                 dispose();
             }
         });
 
         Gdx.input.setInputProcessor(stage);
     }
+
+
 
     @Override
     public void show() {
