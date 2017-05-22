@@ -15,7 +15,7 @@ import cat.xtec.ioc.utils.Settings;
 
 public class Asteroid extends Scrollable {
 
-   private Circle collisionCircle;
+    private Circle collisionCircle;
 
     Random r;
 
@@ -25,7 +25,7 @@ public class Asteroid extends Scrollable {
         super(x, y, width, height, velocity);
 
         // Creem el cercle
-      collisionCircle = new Circle();
+        collisionCircle = new Circle();
 
         /* Accions */
         r = new Random();
@@ -45,19 +45,17 @@ public class Asteroid extends Scrollable {
         repeat.setCount(RepeatAction.FOREVER);
 
 
-
         // Equivalent:
         // this.addAction(Actions.repeat(RepeatAction.FOREVER, Actions.rotateBy(-90f, 0.2f)));
 
         this.addAction(repeat);
 
 
-
     }
 
     public void setOrigin() {
 
-        this.setOrigin(width/2 + 1, height/2);
+        this.setOrigin(width / 2 + 1, height / 2);
 
     }
 
@@ -66,7 +64,7 @@ public class Asteroid extends Scrollable {
         super.act(delta);
 
         // Actualitzem el cercle de col·lisions (punt central de l'asteroid i el radi.
-      collisionCircle.set(position.x + width / 2.0f, position.y + width / 2.0f, width / 2.0f);
+        collisionCircle.set(position.x + width / 2.0f, position.y + width / 2.0f, width / 2.0f);
 
 
     }
@@ -79,7 +77,7 @@ public class Asteroid extends Scrollable {
         // Modificarem l'alçada i l'amplada segons l'al·leatori anterior
         width = height = 34 * newSize;
         // La posició serà un valor aleatòri entre 0 i l'alçada de l'aplicació menys l'alçada
-        position.y =  new Random().nextInt(Settings.GAME_HEIGHT - (int) height);
+        position.y = new Random().nextInt(Settings.GAME_HEIGHT - (int) height);
 
         assetAsteroid = r.nextInt(15);
         setOrigin();
@@ -89,19 +87,22 @@ public class Asteroid extends Scrollable {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
-     //   batch.draw (AssetManager.asteroid[assetAsteroid], position.x, position.y, width, height);
+        //   batch.draw (AssetManager.asteroid[assetAsteroid], position.x, position.y, width, height);
         batch.draw(AssetManager.asteroid[assetAsteroid], position.x, position.y, this.getOriginX(), this.getOriginY(), width, height, this.getScaleX(), this.getScaleY(), this.getRotation());
     }
 
-    // Retorna true si hi ha col·lisió
     public boolean collides(Spacecraft nau) {
 
-    //    if (position.x <= nau.getX() + nau.getWidth()) {
+        if (position.x <= nau.getX() + nau.getWidth()) {
             // Comprovem si han col·lisionat sempre i quan l'asteroid estigui a la mateixa alçada que la spacecraft
-
             return (Intersector.overlaps(collisionCircle, nau.getCollisionRect()));
-      //  }
-        //   return false;
+        }
+        return false;
     }
 
+
+    public boolean collidesBala(Bullet bullet) {
+        return (Intersector.overlaps(collisionCircle, bullet.getBalaCollision()));
+
+    }
 }

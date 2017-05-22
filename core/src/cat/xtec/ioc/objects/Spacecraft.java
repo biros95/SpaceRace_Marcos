@@ -110,7 +110,7 @@ public class Spacecraft extends Actor {
         */
 
        collisionRect.set(position.x, position.y + 3, width, 10);
-      //  setBounds(position.x, position.y, width, height);
+      setBounds(position.x, position.y, width, height);
 
     }
 
@@ -198,6 +198,9 @@ public class Spacecraft extends Actor {
       //  Gdx.app.log("Rotació", Double.toString(getRotation()));
 
     }
+
+
+
 
     @Override
     public float getRotation() {

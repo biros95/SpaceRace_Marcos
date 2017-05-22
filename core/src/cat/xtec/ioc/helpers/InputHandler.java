@@ -1,5 +1,6 @@
 package cat.xtec.ioc.helpers;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
@@ -82,6 +83,9 @@ public class InputHandler implements InputProcessor {
         Actor actorHit = stage.hit(stageCoord.x, stageCoord.y, true);
         if (actorHit != null)
             Gdx.app.log("HIT", actorHit.getName());
+        else {
+            GameScreen.shoot();
+        }
         return true;
     }
 

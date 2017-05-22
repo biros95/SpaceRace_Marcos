@@ -98,6 +98,19 @@ public class ScrollHandler extends Group {
         }
         return false;
     }
+    public boolean collidesBullet(Bullet bullet) {
+
+        // Comprovem les col·lisions entre cada asteroid i la nau
+        for (Asteroid asteroid : asteroids) {
+            if (asteroid.collidesBala(bullet)) {
+                asteroid.remove();
+                bullet.remove();
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public ArrayList<Asteroid> getAsteroids() {
         return asteroids;

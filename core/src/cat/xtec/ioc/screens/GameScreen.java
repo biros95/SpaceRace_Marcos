@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -17,20 +18,21 @@ import cat.xtec.ioc.helpers.AssetManager;
 import cat.xtec.ioc.helpers.InputHandler;
 import cat.xtec.ioc.objects.Asteroid;
 import cat.xtec.ioc.objects.Background;
+import cat.xtec.ioc.objects.Bullet;
 import cat.xtec.ioc.objects.ScrollHandler;
 import cat.xtec.ioc.objects.Spacecraft;
 import cat.xtec.ioc.utils.Settings;
 
 public class GameScreen implements Screen {
-
+    static Bullet bullet = null;
     // Per controlar el gameover
     Boolean gameOver = false;
 
     // Objectes necessaris
-    private Stage stage;
+    private static Stage stage;
     private Spacecraft spacecraft;
    // private Background bg;
-    private ScrollHandler scrollHandler;
+    private static ScrollHandler scrollHandler;
 
     // Encarregats de dibuixar elements per pantalla
     private ShapeRenderer shapeRenderer;
@@ -38,6 +40,7 @@ public class GameScreen implements Screen {
 
     // Per controlar l'animació de l'explosió
     private float explosionTime = 0;
+    private float explosionTimeBullet = 0;
 
     // Preparem el textLayout per escriure text
    // private GlyphLayout textLayout;
@@ -89,6 +92,30 @@ public class GameScreen implements Screen {
         Gdx.input.setInputProcessor(new InputHandler(this));
 
     }
+    public static void shoot() {
+        if (bullet == null) {
+            for (Actor actor : stage.getActors()) {
+                if (actor.getName() != null && actor.getName().equalsIgnoreCase("spacecraft")) {
+                    bullet = new Bullet(actor.getX() + actor.getWidth(), actor.getY() + actor.getHeight() / 2, scrollHandler);
+                    stage.addActor(bullet);
+                    break;
+                }
+            }
+        }
+    }
+
+    public void comprobarColisiones(){
+        if (scrollHandler.collides(spacecraft)) {
+            // Si hi ha hagut col·lisió: Reproduïm l'explosió i posem l'estat a GameOver
+
+            AssetManager.explosionSound.play();
+            stage.getRoot().findActor("spacecraft").remove();
+        }
+    }
+
+
+
+
 
     private void dificultad(int dificultad) {
 
@@ -166,12 +193,31 @@ public class GameScreen implements Screen {
         stage.draw();
         stage.act(delta);
 
+
+
         if (!gameOver) {
             if (scrollHandler.collides(spacecraft)) {
                // Si hi ha hagut col·lisió: Reproduïm l'explosió
                 AssetManager.explosionSound.play();
                 stage.getRoot().findActor("spacecraft").remove();
                 gameOver = true;
+            }
+            if (bullet != null && scrollHandler.collidesBullet(bullet)) {
+                // Si hi ha hagut col·lisió: Reproduïm l'explosió
+                AssetManager.explosionSound.play();
+
+
+//                stage.getRoot().findActor("bullet").remove();
+           //     gameOver = true;
+
+                batch.begin();
+                // Si hi ha hagut col·lisió: Reproduïm l'explosió
+                batch.draw(AssetManager.explosionAnim.getKeyFrame(explosionTimeBullet, false), (bullet.getX() + bullet.getWidth() / 2) - 32, bullet.getY() + bullet.getHeight() / 2 - 32, 64, 64);
+                // AssetManager.font.draw(batch, textLayout, Settings.GAME_WIDTH/2 - textLayout.width/2, Settings.GAME_HEIGHT/2 - textLayout.height/2);
+                batch.end();
+
+                explosionTimeBullet += delta;
+                bullet = null;
             }
 
         } else {

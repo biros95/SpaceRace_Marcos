@@ -7,6 +7,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.awt.Font;
@@ -17,7 +18,7 @@ public class AssetManager {
     public static Texture sheet;
 
     // Nau i fons
-    public static TextureRegion spacecraft, spacecraftDown, spacecraftUp, background;
+    public static TextureRegion spacecraft, spacecraftDown, spacecraftUp, background, bullet;
 
     // Asteroid
     public static TextureRegion[] asteroid;
@@ -49,6 +50,11 @@ public class AssetManager {
 
         spacecraftDown = new TextureRegion(sheet, 72, 0, 36, 15);
         spacecraftDown.flip(false, true);
+        bullet = new TextureRegion(sheet, 494, 262, 47, 53);
+//RGBA
+
+
+
 
         // Carreguem els 16 estats de l'asteroid
 
